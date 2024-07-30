@@ -1,4 +1,5 @@
 import 'dart:async';
+
 import 'package:better_player_plus/better_player_plus.dart';
 import 'package:better_player_plus/src/configuration/better_player_controller_event.dart';
 import 'package:better_player_plus/src/core/better_player_utils.dart';
@@ -166,16 +167,41 @@ class _BetterPlayerState extends State<BetterPlayer>
     );
   }
 
+  void toggleFullscreen() {
+    widget.controller.exitFullScreen();
+  }
+
   Widget _buildFullScreenVideo(
       BuildContext context,
       Animation<double> animation,
       BetterPlayerControllerProvider controllerProvider) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      body: Container(
-        alignment: Alignment.center,
-        color: Colors.black,
-        child: controllerProvider,
+      backgroundColor: Colors.black,
+      body: SafeArea(
+        child: Container(
+          alignment: Alignment.center,
+          child: Stack(
+            children: [
+              controllerProvider,
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: IconButton(
+                  iconSize: 30,
+                  style: ElevatedButton.styleFrom(
+                    shape: const CircleBorder(),
+                    backgroundColor: Colors.black.withOpacity(0.2),
+                    foregroundColor: Colors.white,
+                  ),
+                  onPressed: () {
+                    toggleFullscreen();
+                  },
+                  icon: const Icon(Icons.close),
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }

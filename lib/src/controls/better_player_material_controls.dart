@@ -334,7 +334,7 @@ class _BetterPlayerMaterialControlsState
   }
 
   Widget _buildExpandButton() {
-    return Padding(
+    return _betterPlayerController!.isFullScreen ? SizedBox() : Padding(
       padding: EdgeInsets.only(right: 12.0),
       child: BetterPlayerMaterialClickableWidget(
         onTap: _onExpandCollapse,
