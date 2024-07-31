@@ -12,8 +12,9 @@ import 'package:flutter/material.dart';
 
 class BetterPlayerWithControls extends StatefulWidget {
   final BetterPlayerController? controller;
+  final Function(bool visbility)? onControlsVisibilityChanged;
 
-  const BetterPlayerWithControls({Key? key, this.controller}) : super(key: key);
+  const BetterPlayerWithControls({Key? key, this.controller, this.onControlsVisibilityChanged}) : super(key: key);
 
   @override
   _BetterPlayerWithControlsState createState() =>
@@ -202,6 +203,9 @@ class _BetterPlayerWithControlsState extends State<BetterPlayerWithControls> {
 
   void onControlsVisibilityChanged(bool state) {
     playerVisibilityStreamController.add(state);
+    if (widget.onControlsVisibilityChanged != null) {
+      widget.onControlsVisibilityChanged!(state);
+    }
   }
 }
 
