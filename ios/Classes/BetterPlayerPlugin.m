@@ -119,6 +119,12 @@ bool _remoteCommandsInitialized = false;
     [[UIApplication sharedApplication] endReceivingRemoteControlEvents];
 }
 
+- (void)skipBy:(int64_t)seconds onPlayer:(BetterPlayer*)player {
+    int64_t currentTime = player.position;
+    int64_t newTime = currentTime + seconds * 1000;
+    [_notificationPlayer seekTo: newTime];
+    _notificationPlayer.eventSink(@{@"event" : @"seek", @"position": @(newTime)});
+}
 
 - (void) setupRemoteCommands:(BetterPlayer*)player  {
     if (_remoteCommandsInitialized){
@@ -130,6 +136,23 @@ bool _remoteCommandsInitialized = false;
     [commandCenter.pauseCommand setEnabled:YES];
     [commandCenter.nextTrackCommand setEnabled:NO];
     [commandCenter.previousTrackCommand setEnabled:NO];
+    
+    // Custom Skip Forward Command (10 seconds)
+    commandCenter.skipForwardCommand.preferredIntervals = @[@10]; // Set the interval to 10 seconds
+    commandCenter.skipForwardCommand.enabled = YES;
+    [commandCenter.skipForwardCommand addTargetWithHandler:^MPRemoteCommandHandlerStatus(MPRemoteCommandEvent * _Nonnull event) {
+        [self skipBy:10 onPlayer:player];
+        return MPRemoteCommandHandlerStatusSuccess;
+    }];
+    
+    // Custom Skip Backward Command (10 seconds)
+    commandCenter.skipBackwardCommand.preferredIntervals = @[@10]; // Set the interval to 10 seconds
+    commandCenter.skipBackwardCommand.enabled = YES;
+    [commandCenter.skipBackwardCommand addTargetWithHandler:^MPRemoteCommandHandlerStatus(MPRemoteCommandEvent * _Nonnull event) {
+        [self skipBy:-10 onPlayer:player];
+        return MPRemoteCommandHandlerStatusSuccess;
+    }];
+    
     if (@available(iOS 9.1, *)) {
         [commandCenter.changePlaybackPositionCommand setEnabled:YES];
     }
